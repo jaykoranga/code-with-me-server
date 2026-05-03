@@ -17,12 +17,13 @@ const RESPONSE_MESSAGES = {
   TOKEN_INVALID: "Invalid or expired token",
   JWT_SECRET_MISSING: "JWT_SECRET is not configured",
   INTERNAL_ERROR: "Internal server error",
+  USER_CREATION_FAILED:'User creation was failed at db '
 };
 
 const toSafeUser = (userDoc) => ({
   id: userDoc._id,
   email: userDoc.email,
-  username: userDoc.username??"",
+  userName: userDoc.userName??"",
   about: userDoc.about,
   profilePicture: userDoc.profilePicture,
   totalMatchesPlayed: userDoc.totalMatchesPlayed,
@@ -43,9 +44,11 @@ const createAuthToken = (userDoc) =>
   );
 
 const signupUser = async (req, res) => {
-  try {
-    const { email, password, username, about, profilePicture } = req.body;
 
+  try {
+    console.log("entered try catch ")
+    const { email, password } = req.body;
+    console.log("email fetched ")
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ message: RESPONSE_MESSAGES.JWT_SECRET_MISSING });
     }
@@ -58,23 +61,38 @@ const signupUser = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: RESPONSE_MESSAGES.USER_EXISTS });
     }
+    console.log("user does not exist in db ")
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    console.log("password hasshed")
 
     const newUser = await User.create({
-      email,
+      email:email,
       password: hashedPassword,
      
+     
     });
+    console.log("new user created")
+    if(!newUser){
+      return res.status(409).json({ message: RESPONSE_MESSAGES.USER_CREATION_FAILED });
+    }
 
     const token = createAuthToken(newUser);
+    console.log("token created ")
+    res.cookie('accessToken',token,{
+      httpOnly:true,
+      secure:true,
+      sameSite:'strict',
+      maxAge:24*60*60*1000
+    })
+    console.log("token attahced to cookie ")
 
     return res.status(201).json({
       message: RESPONSE_MESSAGES.SIGNUP_SUCCESS,
       user: toSafeUser(newUser),
-      token,
     });
   } catch (error) {
+    console.log("error while signing is ",error)
     return res.status(500).json({ message: RESPONSE_MESSAGES.INTERNAL_ERROR });
   }
 };
@@ -102,11 +120,16 @@ const loginUser = async (req, res) => {
     }
 
     const token = createAuthToken(user);
-
+    res.cookie('accessToken',token,{
+      httpOnly:true,
+      secure:true,
+      sameSite:'strict',
+      maxAge:24*60*60*1000
+    })
     return res.status(200).json({
       message: RESPONSE_MESSAGES.LOGIN_SUCCESS,
       user: toSafeUser(user),
-      token,
+      
     });
   } catch (error) {
     return res.status(500).json({ message: RESPONSE_MESSAGES.INTERNAL_ERROR });
@@ -115,6 +138,7 @@ const loginUser = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
+   
     if (!req.user || !req.user.userId) {
       return res.status(401).json({ message: RESPONSE_MESSAGES.TOKEN_INVALID });
     }

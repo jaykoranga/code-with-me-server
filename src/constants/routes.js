@@ -10,6 +10,14 @@ const USER_ROUTES = {
   PROFILE: "/profile",
 };
 
+const ROOM_ROUTES = {
+  CREATE:'createRoom',
+  JOIN:'joinRoom',
+  GET:'getRoom',
+  LEAVE:'leaveRoom',
+  DELETE:'deleteRoom'
+}
+
 module.exports = {
   ROUTE_PREFIX,
   USER_ROUTES,
