@@ -2,8 +2,23 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+const { generateUniqueUserName } = require("../utils/generateUniqueName");
 
 const SALT_ROUNDS = 10;
+
+const parseBooleanEnv = (value, defaultValue) => {
+  if (value === undefined) return defaultValue;
+  return String(value).toLowerCase() === "true";
+};
+
+const COOKIE_NAME = process.env.COOKIE_NAME || "accessToken";
+const COOKIE_OPTIONS = {
+  httpOnly: parseBooleanEnv(process.env.COOKIE_HTTP_ONLY, true),
+  secure: parseBooleanEnv(process.env.COOKIE_SECURE, true),
+  sameSite: process.env.COOKIE_SAME_SITE || "strict",
+  maxAge: Number(process.env.COOKIE_MAX_AGE_MS) || 24 * 60 * 60 * 1000,
+  path: process.env.COOKIE_PATH || "/",
+};
 
 const RESPONSE_MESSAGES = {
   SIGNUP_SUCCESS: "User created successfully",
@@ -69,6 +84,7 @@ const signupUser = async (req, res) => {
     const newUser = await User.create({
       email:email,
       password: hashedPassword,
+      userName:generateUniqueUserName()
      
      
     });
@@ -79,12 +95,9 @@ const signupUser = async (req, res) => {
 
     const token = createAuthToken(newUser);
     console.log("token created ")
-    res.cookie('accessToken',token,{
-      httpOnly:true,
-      secure:true,
-      sameSite:'strict',
-      maxAge:24*60*60*1000
-    })
+    
+    //cookie set up 
+    res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS)
     console.log("token attahced to cookie ")
 
     return res.status(201).json({
@@ -120,12 +133,7 @@ const loginUser = async (req, res) => {
     }
 
     const token = createAuthToken(user);
-    res.cookie('accessToken',token,{
-      httpOnly:true,
-      secure:true,
-      sameSite:'strict',
-      maxAge:24*60*60*1000
-    })
+    res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS)
     return res.status(200).json({
       message: RESPONSE_MESSAGES.LOGIN_SUCCESS,
       user: toSafeUser(user),
