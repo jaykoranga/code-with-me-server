@@ -2,6 +2,7 @@
 const ROUTE_PREFIX = {
   API: "/api/v1",
   USERS: "/users",
+  ROOM:'/room'
 };
 
 const USER_ROUTES = {
@@ -11,14 +12,15 @@ const USER_ROUTES = {
 };
 
 const ROOM_ROUTES = {
-  CREATE:'createRoom',
-  JOIN:'joinRoom',
-  GET:'getRoom',
-  LEAVE:'leaveRoom',
-  DELETE:'deleteRoom'
+  CREATE:'/create',
+  JOIN:'/join',
+  GET:'/get',
+  LEAVE:'/leave',
+  DELETE:'/delete'
 }
 
 module.exports = {
   ROUTE_PREFIX,
   USER_ROUTES,
+  ROOM_ROUTES
 };
