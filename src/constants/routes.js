@@ -9,14 +9,17 @@ const USER_ROUTES = {
   SIGNUP: "/signup",
   LOGIN: "/login",
   PROFILE: "/profile",
+  LOGOUT: "/logout"
 };
 
 const ROOM_ROUTES = {
-  CREATE:'/create',
-  JOIN:'/join',
-  GET:'/get',
-  LEAVE:'/leave',
-  DELETE:'/delete'
+  CREATE:'/',
+  JOIN:'/join/:roomId',
+  GET:'/get/:roomId',
+  LEAVE:'/leave/:roomId',
+  DELETE:'/delete/:roomId',
+  CREATED:'/created',
+  JOINED:'/joined',
 }
 
 module.exports = {

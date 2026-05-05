@@ -1,6 +1,9 @@
 const Room = require("../models/rooms.model");
 const { STATUS_CODES } = require("../constants/statusCodes");
 const { generateUniqueRoomName } = require("../utils/generateUniqueName");
+const roomsModel = require("../models/rooms.model");
+const formatRoomResponse = require('../utils/room/formatRoomResponse');
+const { get } = require("mongoose");
 
 const ROOM_MESSAGES = {
   DIFFICULTY_REQUIRED: "Please select a difficulty",
@@ -9,6 +12,8 @@ const ROOM_MESSAGES = {
   USER_REQUIRED: "Unauthorized: user context missing",
   ROOM_CREATED: "Room created successfully",
   ROOM_CREATION_FAILED: "Room could not be created",
+  ROOM_ID_REQUIRED: "Room id is required to fetch the room",
+  ROOM_NOT_FOUND: "Room not found",
   INTERNAL_ERROR: "Internal server error",
 };
 
@@ -16,11 +21,12 @@ const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
 const MIN_PARTICIPANTS = 2;
 const MAX_PARTICIPANTS = 5;
 
-const createId = (prefix) =>
+const createId = (prefix = "random-prefix") =>
   `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 const createInviteCode = () =>
   Math.random().toString(36).slice(2, 8).toUpperCase();
 
+//create a room 
 const createRoom = async (req, res) => {
   try {
     const { difficulty, maxParticipants } = req.body || {};
@@ -62,8 +68,8 @@ const createRoom = async (req, res) => {
       name: generateUniqueRoomName(),
       inviteCode: createInviteCode(),
       createdBy: userId,
-      participants: [userId],
-      numberOfUsers: 1,
+      participants: [],
+      numberOfUsers: 0,
       maxParticipants: parsedMaxParticipants,
       difficulty: normalizedDifficulty,
     };
@@ -78,7 +84,7 @@ const createRoom = async (req, res) => {
 
     return res.status(STATUS_CODES.CREATED).json({
       message: ROOM_MESSAGES.ROOM_CREATED,
-      room,
+      room: formatRoomResponse(room),
     });
   } catch (error) {
     console.error("Error while creating room:", error);
@@ -88,6 +94,75 @@ const createRoom = async (req, res) => {
   }
 };
 
+//get a room 
+const getRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+
+    if (!roomId) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.ROOM_ID_REQUIRED,
+      });
+    }
+
+    const user = req.user;
+    if (!user) {
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+        message: ROOM_MESSAGES.USER_REQUIRED,
+      });
+    }
+
+
+    const room = await Room.findOne({ id: roomId });
+    
+
+    if (!room) {
+      return res.status(404).json({
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND,
+      });
+    }
+
+    return res.status(STATUS_CODES.OK).json({
+      room: formatRoomResponse(room),
+    });
+  } catch (error) {
+    console.error("Error while fetching room:", error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: ROOM_MESSAGES.INTERNAL_ERROR,
+    });
+  }
+};
+
+const getMyRooms = async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+        message: ROOM_MESSAGES.USER_REQUIRED,
+      });
+    }
+    console.log("Fetching rooms for userId:", userId);
+    const rooms = await Room.find({ createdBy: userId });
+    if(!rooms){
+      return res.status(STATUS_CODES.OK).json({
+        rooms: [],
+      });
+    }
+
+    return res.status(STATUS_CODES.OK).json({
+      rooms: rooms.map(formatRoomResponse),
+    });
+  } catch (error) {
+    console.error("Error while fetching user's rooms:", error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: ROOM_MESSAGES.INTERNAL_ERROR,
+    });
+  }
+}
+
 module.exports = {
   createRoom,
-};
+  getRoom,
+  getMyRooms,
+}
