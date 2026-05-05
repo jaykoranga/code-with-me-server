@@ -14,6 +14,9 @@ const verifyToken = async(req, res, next) => {
 
   try {
      const token = req.cookies.accessToken
+     if(!token){
+      return res.status(401).json({ message: AUTH_MESSAGES.TOKEN_REQUIRED });
+     }
       
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = {
@@ -22,7 +25,7 @@ const verifyToken = async(req, res, next) => {
     };
     return next();
   } catch (error) {
-    console.error(error)
+    console.error("Token verification error:", error.message);
     return res.status(401).json({ message: AUTH_MESSAGES.TOKEN_INVALID });
   }
 };
