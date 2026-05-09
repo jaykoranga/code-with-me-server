@@ -1,8 +1,9 @@
 export const ROOM_STATUS={
      WAITING: 'waiting',
-  ACTIVE: 'active',
-  COMPLETED: 'completed',
-  CANCELLED:'cancelled'
+     CLOSED:'closed',
+     ACTIVE: 'active',
+     COMPLETED: 'completed',
+     CANCELLED:'cancelled'
 }
 
 export const  ROOM_DIFFICULTY={

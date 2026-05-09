@@ -2,8 +2,10 @@ const Room = require("../models/rooms.model");
 const { STATUS_CODES } = require("../constants/statusCodes");
 const { generateUniqueRoomName } = require("../utils/generateUniqueName");
 const roomsModel = require("../models/rooms.model");
-const formatRoomResponse = require('../utils/room/formatRoomResponse');
+const formatRoomResponse = require("../utils/room/formatRoomResponse");
 const { get } = require("mongoose");
+
+const User = require("../models/User.model");
 
 const ROOM_MESSAGES = {
   DIFFICULTY_REQUIRED: "Please select a difficulty",
@@ -15,6 +17,10 @@ const ROOM_MESSAGES = {
   ROOM_ID_REQUIRED: "Room id is required to fetch the room",
   ROOM_NOT_FOUND: "Room not found",
   INTERNAL_ERROR: "Internal server error",
+  ROOM_FULL: "Room is full",
+  ROOM_NOT_JOINABLE: "Room is not open for joining",
+  userAlreadyInRoom: "User is already in the room",
+  INVALID_INVITE_CODE: "Invalid invite code",
 };
 
 const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
@@ -26,7 +32,7 @@ const createId = (prefix = "random-prefix") =>
 const createInviteCode = () =>
   Math.random().toString(36).slice(2, 8).toUpperCase();
 
-//create a room 
+//create a room
 const createRoom = async (req, res) => {
   try {
     const { difficulty, maxParticipants } = req.body || {};
@@ -94,7 +100,7 @@ const createRoom = async (req, res) => {
   }
 };
 
-//get a room 
+//get a room
 const getRoom = async (req, res) => {
   try {
     const { roomId } = req.params;
@@ -112,9 +118,7 @@ const getRoom = async (req, res) => {
       });
     }
 
-
     const room = await Room.findOne({ id: roomId });
-    
 
     if (!room) {
       return res.status(404).json({
@@ -133,6 +137,7 @@ const getRoom = async (req, res) => {
   }
 };
 
+//get my rooms
 const getMyRooms = async (req, res) => {
   try {
     const userId = req.user?.userId;
@@ -144,7 +149,7 @@ const getMyRooms = async (req, res) => {
     }
     console.log("Fetching rooms for userId:", userId);
     const rooms = await Room.find({ createdBy: userId });
-    if(!rooms){
+    if (!rooms) {
       return res.status(STATUS_CODES.OK).json({
         rooms: [],
       });
@@ -159,10 +164,85 @@ const getMyRooms = async (req, res) => {
       message: ROOM_MESSAGES.INTERNAL_ERROR,
     });
   }
-}
+};
+
+// join a room
+const joinRoom = async (req, res) => {
+  try {
+    //check if room exists
+    const { roomId } = req.params;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND,
+      });
+    }
+
+    const userId = req.user.userId;
+    
+   
+    //check if user is already in the room
+    const alreadyJoined = room.participants.includes(userId);
+    if (alreadyJoined) {
+      return res.status(STATUS_CODES.OK).json({
+        message: ROOM_MESSAGES.userAlreadyInRoom,
+      });
+    }
+
+    //check room status
+    if (room.status !== "waiting") {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.ROOM_NOT_JOINABLE,
+      });
+    }
+
+    //check room number of participants
+    if (room.numberOfUsers >= room.maxParticipants) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.ROOM_FULL,
+      });
+    }
+
+    //check if the user is the creator
+    const CreatorId = room.createdBy._id;
+    if (CreatorId === userId) {
+      room.participants.push(userId);
+      room.numberOfUsers = room.participants.length;
+      await room.save();
+      return res.status(STATUS_CODES.OK).json({
+        message: ROOM_MESSAGES.ROOM_JOINED,
+        room: formatRoomResponse(room),
+      });
+    }
+
+    //check the invite code , it can come from the body or query
+    const  inviteCode  = req.body.inviteCode || req.query.inviteCode;
+    console.log("Received invite code:", inviteCode);
+    if (inviteCode !== room.inviteCode) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.INVALID_INVITE_CODE,
+      });
+    }
+    //add user to the room
+    room.participants.push(userId);
+    room.numberOfUsers = room.participants.length;
+    await room.save();
+    return res.status(STATUS_CODES.OK).json({
+      message: ROOM_MESSAGES.ROOM_JOINED,
+      room: formatRoomResponse(room),
+    });
+  } catch (error) {
+    console.error("Error while joining room:", error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: ROOM_MESSAGES.INTERNAL_ERROR,
+    });
+  }
+};
 
 module.exports = {
   createRoom,
   getRoom,
   getMyRooms,
-}
+  joinRoom,
+};

@@ -12,6 +12,7 @@ const USER_ROUTES = {
   LOGOUT: "/logout"
 };
 
+//example room routes /api/v1/room/create
 const ROOM_ROUTES = {
   CREATE:'/',
   JOIN:'/join/:roomId',
