@@ -21,6 +21,7 @@ const ROOM_MESSAGES = {
   ROOM_NOT_JOINABLE: "Room is not open for joining",
   userAlreadyInRoom: "User is already in the room",
   INVALID_INVITE_CODE: "Invalid invite code",
+  ROOOM_LEFT_SUCCESSFULLY:" room left successfuylly "
 };
 
 const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
@@ -29,6 +30,7 @@ const MAX_PARTICIPANTS = 5;
 
 const createId = (prefix = "random-prefix") =>
   `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
 const createInviteCode = () =>
   Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -240,9 +242,70 @@ const joinRoom = async (req, res) => {
   }
 };
 
+// get your joined rooms 
+const getJoinedRooms = async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+    
+    const rooms = await Room.find({
+      participants:userId
+    })
+    if(!rooms){
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message:ROOM_MESSAGES.ROOM_NOT_FOUND,
+        rooms:[]
+      })
+    }
+    return res.status(STATUS_CODES.OK).json({
+       rooms:rooms.map(formatRoomResponse)
+    })
+  }
+ 
+  catch(error){
+      console.log("error while fetching joined rooms :",error)
+      return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        message:ROOM_MESSAGES.INTERNAL_ERROR
+      })
+  }
+}
+
+//leave a room 
+const leaveRoom = async (req,res) => {
+  try {
+    const {roomId} = req.params
+    const userId = req.user.userId
+    
+    // find if room exist or not 
+    const room = await Room.findOne({id:roomId})
+    if(!room){
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message:ROOM_MESSAGES.ROOM_NOT_FOUND,
+
+      })
+    }
+   const updatedParticipants = room.participants.filter((participant)=>participant!=userId)
+   room.participants=updatedParticipants
+   room.numberOfUsers -= 1
+   room.save()
+   return res.status(STATUS_CODES.OK).json({
+    message:ROOM_MESSAGES.ROOOM_LEFT_SUCCESSFULLY,
+    rooms:formatRoomResponse(room)
+   })
+
+  } catch (error) {
+    console.log("error while leaving room",error)
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message:ROOM_MESSAGES.INTERNAL_SERVER_ERROR
+    })
+  }
+}
+
+
 module.exports = {
   createRoom,
   getRoom,
   getMyRooms,
   joinRoom,
+  getJoinedRooms,
+  leaveRoom
 };
