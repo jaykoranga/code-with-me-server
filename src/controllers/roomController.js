@@ -21,7 +21,9 @@ const ROOM_MESSAGES = {
   ROOM_NOT_JOINABLE: "Room is not open for joining",
   userAlreadyInRoom: "User is already in the room",
   INVALID_INVITE_CODE: "Invalid invite code",
-  ROOOM_LEFT_SUCCESSFULLY:" room left successfuylly "
+  ROOOM_LEFT_SUCCESSFULLY:" room left successfuylly ",
+  ONLY_CREATOR:"only creator of the room is allowed to do this operation",
+  ROOM_DELETED:"Room was deleted succesfully",
 };
 
 const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
@@ -300,6 +302,34 @@ const leaveRoom = async (req,res) => {
   }
 }
 
+const deleteRoom = async (req,res) =>{
+  try {
+    const userId = req.user.userId  
+    const roomId = req.params.roomId
+
+    const room = await Room.findOne({id:roomId})
+    if(!room){
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message:ROOM_MESSAGES.ROOM_NOT_FOUND
+      })
+    }
+    if( String(room.createdBy) != userId){
+      return res.status(STATUS_CODES.FORBIDDEN).json({
+        message:ROOM_MESSAGES.ONLY_CREATOR
+      })
+    }
+    await room.deleteOne({id:roomId})
+    return res.status(STATUS_CODES.OK).json({
+      message:ROOM_MESSAGES.ROOM_DELETED
+    })
+
+  } catch (error) {
+    console.log("room deletion error",error)
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message:ROOM_MESSAGES.INTERNAL_ERROR
+    })
+  }
+}
 
 module.exports = {
   createRoom,
