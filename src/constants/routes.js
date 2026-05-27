@@ -2,7 +2,8 @@
 const ROUTE_PREFIX = {
   API: "/api/v1",
   USERS: "/users",
-  ROOM:'/room'
+  ROOM: '/room',
+  MATCH: '/match'
 };
 
 const USER_ROUTES = {
@@ -23,8 +24,15 @@ const ROOM_ROUTES = {
   JOINED:'/joined',
 }
 
+const MATCH_ROUTES = {
+  INITIATE: '/initiate',
+  GET: '/:matchId',
+  FORFEIT: '/:matchId/forfeit',
+}
+
 module.exports = {
   ROUTE_PREFIX,
   USER_ROUTES,
-  ROOM_ROUTES
+  ROOM_ROUTES,
+  MATCH_ROUTES
 };
