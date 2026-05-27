@@ -1,4 +1,4 @@
-export const ROOM_STATUS={
+const ROOM_STATUS={
      WAITING: 'waiting',
      CLOSED:'closed',
      ACTIVE: 'active',
@@ -6,19 +6,19 @@ export const ROOM_STATUS={
      CANCELLED:'cancelled'
 }
 
-export const  ROOM_DIFFICULTY={
+const  ROOM_DIFFICULTY={
         EASY:'easy',
         MEDIUM:'medium',
         HARD:'hard'
 }
 
-export const QUESTION_DIFFICULTY = {
+const QUESTION_DIFFICULTY = {
         EASY:'easy',
         MEDIUM:'medium',
         HARD:'hard'
 }
 
-export const LANGUAGES = {
+const LANGUAGES = {
         JS:"javascript",
         CPP:"C++",
         C:"C",
@@ -27,5 +27,40 @@ export const LANGUAGES = {
 
 }
 
+const MATCH_STATUS = {
+         WAITING:'waiting',
+         COUNTDOWN:'countdown',
+         CLOSED:'closed',
+         ACTIVE:'active',
+         COMPLETED:'completed',
+         CANCELLED:'cancelled',
+        
+}
 
+const MATCH_TYPE = {
+        PROBLEM_SOLVING:'problem_solving',
+        SPEEDCODING:'speedcoding',
+}
 
+const submissionStatus = {
+
+        PENDING:'pending',
+        RUNNING:'running',
+        ACCEPTED:'accepted',
+        WRONGANSWER:'wrong_answer',
+        TIMEEXCEEDED:'time_exceeded',
+        RUNTIMEERROR:'runtime_error',
+        COMPILEERROR:'compile_error',
+        INTERNALERROR:'internal_error',
+        SYSTEMERROR:'system_error',
+}
+
+module.exports = {
+  ROOM_STATUS,
+  ROOM_DIFFICULTY,
+  QUESTION_DIFFICULTY,
+  LANGUAGES,
+  MATCH_STATUS,
+  MATCH_TYPE,
+  submissionStatus
+};

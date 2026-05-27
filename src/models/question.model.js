@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { QUESTION_DIFFICULTY, LANGUAGES } = require("../constants/enums");
+
 const questionSchema = new mongoose.Schema(
   {
     name: {
@@ -46,13 +47,36 @@ const questionSchema = new mongoose.Schema(
           type: String,
           enum: Object.values(LANGUAGES),
         },
+
         code: {
           type: String,
         },
+
+        description:{
+          type: String,
+          trim: true,
+          
+        }
       },
     ],
 
-    category:[String]
+    category: [String],
+
+    constraints: [String],
+    examples: [
+      {
+        input: {
+          type: String,
+          required: true,
+        },
+        output: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );
+const Question = mongoose.model("Question", questionSchema);
+module.exports = { Question,questionSchema };
