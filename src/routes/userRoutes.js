@@ -1,7 +1,12 @@
 
 const express = require("express");
 const { USER_ROUTES } = require("../constants/routes");
-const { signupUser, loginUser, getProfile, logoutUser } = require("../controllers/userController");
+const {
+  signupUser,
+  loginUser,
+  getProfile,
+  logoutUser,
+} = require("../modules/user/controller/userController");
 const { verifyToken } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
