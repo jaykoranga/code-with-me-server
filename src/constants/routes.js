@@ -16,7 +16,7 @@ const USER_ROUTES = {
 //example room routes /api/v1/room/create
 const ROOM_ROUTES = {
   CREATE:'/',
-  JOIN:'/join/:roomId',
+  JOIN:'/join/:inviteCode',
   GET:'/get/:roomId',
   LEAVE:'/leave/:roomId',
   DELETE:'/delete/:roomId',

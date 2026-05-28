@@ -151,10 +151,16 @@ const getMyRooms = async (req, res) => {
 // join a room
 const joinRoom = async (req, res) => {
   try {
-    //check if room exists
-    const { roomId } = req.params;
+    // Check if room exists by invite code
+    const { inviteCode } = req.params;
+    console.log("invite code is", inviteCode)
+    if (!inviteCode) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.INVALID_INVITE_CODE,
+      });
+    }
 
-    const room = await Room.findOne({ id: roomId });
+    const room = await Room.findOne({ inviteCode: String(inviteCode).toUpperCase() });
     if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         message: ROOM_MESSAGES.ROOM_NOT_FOUND,
@@ -162,9 +168,8 @@ const joinRoom = async (req, res) => {
     }
 
     const userId = req.user.userId;
-    
-   
-    //check if user is already in the room
+
+    // Check if user is already in the room
     const alreadyJoined = room.participants.includes(userId);
     if (alreadyJoined) {
       return res.status(STATUS_CODES.OK).json({
@@ -172,44 +177,25 @@ const joinRoom = async (req, res) => {
       });
     }
 
-    //check room status
+    // Check room status
     if (room.status !== "waiting") {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         message: ROOM_MESSAGES.ROOM_NOT_JOINABLE,
       });
     }
 
-    //check room number of participants
+    // Check room number of participants
     if (room.numberOfUsers >= room.maxParticipants) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         message: ROOM_MESSAGES.ROOM_FULL,
       });
     }
 
-    //check if the user is the creator
-    const isCreator = String(room.createdBy) === userId;
-    if (isCreator) {
-      room.participants.push(userId);
-      room.numberOfUsers = room.participants.length;
-      await room.save();
-      return res.status(STATUS_CODES.OK).json({
-        message: ROOM_MESSAGES.ROOM_JOINED,
-        room: formatRoomResponse(room),
-      });
-    }
-
-    //check the invite code , it can come from the body or query
-    const  inviteCode  = req.body.inviteCode || req.query.inviteCode;
-    console.log("Received invite code:", inviteCode);
-    if (inviteCode !== room.inviteCode) {
-      return res.status(STATUS_CODES.BAD_REQUEST).json({
-        message: ROOM_MESSAGES.INVALID_INVITE_CODE,
-      });
-    }
-    //add user to the room
+    // Add user to the room
     room.participants.push(userId);
     room.numberOfUsers = room.participants.length;
     await room.save();
+
     return res.status(STATUS_CODES.OK).json({
       message: ROOM_MESSAGES.ROOM_JOINED,
       room: formatRoomResponse(room),
@@ -226,85 +212,85 @@ const joinRoom = async (req, res) => {
 const getJoinedRooms = async (req, res) => {
   try {
     const userId = req.user?.userId;
-    
+
     const rooms = await Room.find({
-      participants:userId
+      participants: userId
     })
-    if(!rooms){
+    if (!rooms) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
-        message:ROOM_MESSAGES.ROOM_NOT_FOUND,
-        rooms:[]
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND,
+        rooms: []
       })
     }
     return res.status(STATUS_CODES.OK).json({
-       rooms:rooms.map(formatRoomResponse)
+      rooms: rooms.map(formatRoomResponse)
     })
   }
- 
-  catch(error){
-      console.log("error while fetching joined rooms :",error)
-      return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        message:ROOM_MESSAGES.INTERNAL_ERROR
-      })
+
+  catch (error) {
+    console.log("error while fetching joined rooms :", error)
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: ROOM_MESSAGES.INTERNAL_ERROR
+    })
   }
 }
 
 //leave a room 
-const leaveRoom = async (req,res) => {
+const leaveRoom = async (req, res) => {
   try {
-    const {roomId} = req.params
+    const { roomId } = req.params
     const userId = req.user.userId
-    
+
     // find if room exist or not 
-    const room = await Room.findOne({id:roomId})
-    if(!room){
+    const room = await Room.findOne({ id: roomId })
+    if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
-        message:ROOM_MESSAGES.ROOM_NOT_FOUND,
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND,
 
       })
     }
-   const updatedParticipants = room.participants.filter((participant)=>participant!=userId)
-   room.participants=updatedParticipants
-   room.numberOfUsers -= 1
-   room.save()
-   return res.status(STATUS_CODES.OK).json({
-    message:ROOM_MESSAGES.ROOOM_LEFT_SUCCESSFULLY,
-    rooms:formatRoomResponse(room)
-   })
+    const updatedParticipants = room.participants.filter((participant) => participant != userId)
+    room.participants = updatedParticipants
+    room.numberOfUsers -= 1
+    room.save()
+    return res.status(STATUS_CODES.OK).json({
+      message: ROOM_MESSAGES.ROOOM_LEFT_SUCCESSFULLY,
+      rooms: formatRoomResponse(room)
+    })
 
   } catch (error) {
-    console.log("error while leaving room",error)
+    console.log("error while leaving room", error)
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-      message:ROOM_MESSAGES.INTERNAL_SERVER_ERROR
+      message: ROOM_MESSAGES.INTERNAL_SERVER_ERROR
     })
   }
 }
 
-const deleteRoom = async (req,res) =>{
+const deleteRoom = async (req, res) => {
   try {
-    const userId = req.user.userId  
+    const userId = req.user.userId
     const roomId = req.params.roomId
 
-    const room = await Room.findOne({id:roomId})
-    if(!room){
+    const room = await Room.findOne({ id: roomId })
+    if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
-        message:ROOM_MESSAGES.ROOM_NOT_FOUND
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND
       })
     }
-    if( String(room.createdBy) != userId){
+    if (String(room.createdBy) != userId) {
       return res.status(STATUS_CODES.FORBIDDEN).json({
-        message:ROOM_MESSAGES.ONLY_CREATOR
+        message: ROOM_MESSAGES.ONLY_CREATOR
       })
     }
-    await room.deleteOne({id:roomId})
+    await room.deleteOne({ id: roomId })
     return res.status(STATUS_CODES.OK).json({
-      message:ROOM_MESSAGES.ROOM_DELETED
+      message: ROOM_MESSAGES.ROOM_DELETED
     })
 
   } catch (error) {
-    console.log("room deletion error",error)
+    console.log("room deletion error", error)
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-      message:ROOM_MESSAGES.INTERNAL_ERROR
+      message: ROOM_MESSAGES.INTERNAL_ERROR
     })
   }
 }
