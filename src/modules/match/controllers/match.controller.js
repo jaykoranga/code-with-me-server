@@ -77,6 +77,10 @@ const initiateMatchmaking = async (req, res) => {
                     name: q.name,
                     description: q.description,
                     difficulty: q.difficulty,
+                    category: q.category,
+                    constraints: q.constraints,
+                    examples: q.examples,
+                    testCases: q.testCases,
                     boilerPlate: q.boilerPlate.filter(b => b.language === "javascript") // JS only for now
                 })),
                 startedAt: match.startedAt
@@ -124,6 +128,10 @@ const getMatchDetails = async (req, res) => {
                     name: q.name,
                     description: q.description,
                     difficulty: q.difficulty,
+                    category: q.category,
+                    constraints: q.constraints,
+                    examples: q.examples,
+                    testCases: q.testCases,
                     boilerPlate: q.boilerPlate.filter(b => b.language === "javascript") // JS only for now
                 })),
                 startedAt: match.startedAt

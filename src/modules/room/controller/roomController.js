@@ -56,8 +56,8 @@ const createRoom = async (req, res) => {
       name: generateUniqueRoomName(),
       inviteCode: createInviteCode(),
       createdBy: userId,
-      participants: [],
-      numberOfUsers: 0,
+      participants: [userId],
+      numberOfUsers: 1,
       maxParticipants: parsedMaxParticipants,
       difficulty: normalizedDifficulty,
     };
@@ -174,6 +174,7 @@ const joinRoom = async (req, res) => {
     if (alreadyJoined) {
       return res.status(STATUS_CODES.OK).json({
         message: ROOM_MESSAGES.userAlreadyInRoom,
+        room: formatRoomResponse(room),
       });
     }
 
@@ -249,6 +250,12 @@ const leaveRoom = async (req, res) => {
 
       })
     }
+    if (room.participants.length < 1 ) {
+     
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message: ROOM_MESSAGES.ROOM_EMPTY,
+      })
+    }
     const updatedParticipants = room.participants.filter((participant) => participant != userId)
     room.participants = updatedParticipants
     room.numberOfUsers -= 1
@@ -295,6 +302,42 @@ const deleteRoom = async (req, res) => {
   }
 }
 
+// isParticipant of the room
+const isParticipant = async(req,res)=>{
+  try{
+    const userId = req.user.userId
+    const roomId = req.params.roomId || req.body.roomId
+    if (!roomId) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: ROOM_MESSAGES.ROOM_ID_REQUIRED,
+      });
+    }
+
+    const room = await Room.findOne({ id: roomId })
+    if (!room) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        message: ROOM_MESSAGES.ROOM_NOT_FOUND
+      })
+    }
+    if (room.participants.includes(userId)) {
+      return res.status(STATUS_CODES.OK).json({
+        message: "You are a participant in this room",
+        isParticipant:true,
+      })
+    }else{
+      return res.status(STATUS_CODES.OK).json({
+        message: "You are not a participant in this room",
+        isParticipant:false,
+      })
+    }
+  }catch(error){
+    console.log("error while checking if participant", error)
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      message: ROOM_MESSAGES.INTERNAL_ERROR
+    })
+  }
+}
+
 module.exports = {
   createRoom,
   getRoom,
@@ -303,4 +346,5 @@ module.exports = {
   getJoinedRooms,
   leaveRoom,
   deleteRoom,
+  isParticipant,
 };

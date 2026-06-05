@@ -17,11 +17,12 @@ const USER_ROUTES = {
 const ROOM_ROUTES = {
   CREATE:'/',
   JOIN:'/join/:inviteCode',
-  GET:'/get/:roomId',
-  LEAVE:'/leave/:roomId',
-  DELETE:'/delete/:roomId',
-  CREATED:'/created',
-  JOINED:'/joined',
+  GET: '/get/:roomId',
+  LEAVE: '/leave/:roomId',
+  DELETE: '/delete/:roomId',
+  CREATED: '/created',
+  JOINED: '/joined',
+  IS_PARTICIPANT: '/is-participant/:roomId'
 }
 
 const MATCH_ROUTES = {

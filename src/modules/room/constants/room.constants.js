@@ -16,6 +16,8 @@ const ROOM_MESSAGES = {
   ROOOM_LEFT_SUCCESSFULLY: " room left successfuylly ",
   ONLY_CREATOR: "only creator of the room is allowed to do this operation",
   ROOM_DELETED: "Room was deleted succesfully",
+  ROOM_EMPTY: "No more participants left in the room",
+  NOT_PARTICIPANT: "You are not a participant in this room",
 };
 
 module.exports = {

@@ -45,6 +45,7 @@ const questions = [
       {
         language: "javascript",
         code: "function twoSum(nums, target) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst lines = input.split('\\n');\nconst nums = JSON.parse(lines[0]);\nconst target = parseInt(lines[1], 10);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(twoSum(nums, target)));",
         description: "Two Sum boilerplate code in JavaScript"
       }
     ]
@@ -80,6 +81,7 @@ const questions = [
       {
         language: "javascript",
         code: "function reverseString(s) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst s = JSON.parse(input);\n// {{USER_CODE}}\nreverseString(s);\nconsole.log(JSON.stringify(s));",
         description: "Reverse String boilerplate code in JavaScript"
       }
     ]
@@ -123,6 +125,7 @@ const questions = [
       {
         language: "javascript",
         code: "function isPalindrome(x) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst x = parseInt(input, 10);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(isPalindrome(x)));",
         description: "Palindrome Number boilerplate code in JavaScript"
       }
     ]
@@ -166,6 +169,7 @@ const questions = [
       {
         language: "javascript",
         code: "function fizzBuzz(n) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst n = parseInt(input, 10);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(fizzBuzz(n)));",
         description: "Fizz Buzz boilerplate code in JavaScript"
       }
     ]
@@ -209,6 +213,7 @@ const questions = [
       {
         language: "javascript",
         code: "function fib(n) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst n = parseInt(input, 10);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(fib(n)));",
         description: "Fibonacci Number boilerplate code in JavaScript"
       }
     ]
@@ -253,6 +258,7 @@ const questions = [
       {
         language: "javascript",
         code: "function isValid(s) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst s = JSON.parse(input);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(isValid(s)));",
         description: "Valid Parentheses boilerplate code in JavaScript"
       }
     ]
@@ -289,6 +295,7 @@ const questions = [
       {
         language: "javascript",
         code: "function singleNumber(nums) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst nums = JSON.parse(input);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(singleNumber(nums)));",
         description: "Single Number boilerplate code in JavaScript"
       }
     ]
@@ -325,6 +332,7 @@ const questions = [
       {
         language: "javascript",
         code: "function maxArea(height) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst height = JSON.parse(input);\n// {{USER_CODE}}\nconsole.log(JSON.stringify(maxArea(height)));",
         description: "Container With Most Water boilerplate code in JavaScript"
       }
     ]
@@ -363,6 +371,7 @@ const questions = [
       {
         language: "javascript",
         code: "function findMedianSortedArrays(nums1, nums2) {\n  // Write your code here\n}",
+        runnerCode: "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst lines = input.split('\\n');\nconst nums1 = JSON.parse(lines[0]);\nconst nums2 = JSON.parse(lines[1]);\n// {{USER_CODE}}\nconst result = findMedianSortedArrays(nums1, nums2);\nconsole.log(Number(result).toFixed(5));",
         description: "Median of Two Sorted Arrays boilerplate code in JavaScript"
       }
     ]

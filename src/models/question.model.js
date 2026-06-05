@@ -52,6 +52,10 @@ const questionSchema = new mongoose.Schema(
           type: String,
         },
 
+        runnerCode: {
+          type: String,
+        },
+
         description:{
           type: String,
           trim: true,
