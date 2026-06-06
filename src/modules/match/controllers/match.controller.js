@@ -32,7 +32,7 @@ const initiateMatchmaking = async (req, res) => {
             return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Room is not in waiting state" });
         }
 
-        if (room.participants.length < 2) {
+        if (room.participants.length < 1) {
             return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MATCH_MESSAGES.NOT_ENOUGH_PLAYERS });
         }
 

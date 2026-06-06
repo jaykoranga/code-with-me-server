@@ -52,7 +52,6 @@ const createRoom = async (req, res) => {
     }
 
     const roomPayload = {
-      id: createId("room"),
       name: generateUniqueRoomName(),
       inviteCode: createInviteCode(),
       createdBy: userId,
@@ -100,7 +99,7 @@ const getRoom = async (req, res) => {
       });
     }
 
-    const room = await Room.findOne({ id: roomId });
+    const room = await Room.findById(roomId);
 
     if (!room) {
       return res.status(404).json({
@@ -243,7 +242,7 @@ const leaveRoom = async (req, res) => {
     const userId = req.user.userId
 
     // find if room exist or not 
-    const room = await Room.findOne({ id: roomId })
+    const room = await Room.findById(roomId)
     if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         message: ROOM_MESSAGES.ROOM_NOT_FOUND,
@@ -278,7 +277,7 @@ const deleteRoom = async (req, res) => {
     const userId = req.user.userId
     const roomId = req.params.roomId
 
-    const room = await Room.findOne({ id: roomId })
+    const room = await Room.findById(roomId)
     if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         message: ROOM_MESSAGES.ROOM_NOT_FOUND
@@ -289,7 +288,7 @@ const deleteRoom = async (req, res) => {
         message: ROOM_MESSAGES.ONLY_CREATOR
       })
     }
-    await room.deleteOne({ id: roomId })
+    await room.deleteOne()
     return res.status(STATUS_CODES.OK).json({
       message: ROOM_MESSAGES.ROOM_DELETED
     })
@@ -313,7 +312,7 @@ const isParticipant = async(req,res)=>{
       });
     }
 
-    const room = await Room.findOne({ id: roomId })
+    const room = await Room.findById(roomId)
     if (!room) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         message: ROOM_MESSAGES.ROOM_NOT_FOUND

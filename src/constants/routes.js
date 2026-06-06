@@ -3,7 +3,8 @@ const ROUTE_PREFIX = {
   API: "/api/v1",
   USERS: "/users",
   ROOM: '/room',
-  MATCH: '/match'
+  MATCH: '/match',
+  SUBMISSION: '/submission'
 };
 
 const USER_ROUTES = {

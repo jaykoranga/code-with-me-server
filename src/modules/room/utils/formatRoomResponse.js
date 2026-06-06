@@ -1,6 +1,6 @@
 const formatRoomResponse = (room) => {
   return {
-    id: room.id,
+    id: room._id,
     name: room.name,
     inviteCode: room.inviteCode,
     numberOfUsers: room.numberOfUsers,

@@ -2,12 +2,6 @@ const mongoose = require("mongoose");
 const {ROOM_STATUS,ROOM_DIFFICULTY}=require('../constants/enums')
 const roomSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
     name: {
       type: String,
       required: true,
