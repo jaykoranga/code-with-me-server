@@ -5,6 +5,7 @@ const formatRoomResponse = (room) => {
     inviteCode: room.inviteCode,
     numberOfUsers: room.numberOfUsers,
     numberOfQuestions: room.numberOfQuestions,
+    matchDuration: room.matchDuration,
     status: room.status,
     createdBy: room.createdBy,
     participants: room.participants,

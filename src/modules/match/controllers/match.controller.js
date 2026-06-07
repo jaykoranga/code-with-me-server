@@ -36,10 +36,10 @@ const initiateMatchmaking = async (req, res) => {
             return res.status(STATUS_CODES.BAD_REQUEST).json({ message: MATCH_MESSAGES.NOT_ENOUGH_PLAYERS });
         }
 
-        // Select a random question matching the room's difficulty
+        // Select random questions matching the room's difficulty
         const questions = await Question.aggregate([
             { $match: { difficulty: room.difficulty } },
-            { $sample: { size: 1 } }
+            { $sample: { size: room.numberOfQuestions || 1 } }
         ]);
 
         if (questions.length === 0) {
@@ -48,17 +48,16 @@ const initiateMatchmaking = async (req, res) => {
             });
         }
 
-        const selectedQuestion = questions[0];
-
         // Create the Match document
         const match = await Match.create({
             status: MATCH_STATUS.ACTIVE,
             Room: room._id,
             players: room.participants,
             maxPlayers: room.maxParticipants,
-            questionsSnapshots: [selectedQuestion],
+            questionsSnapshots: questions,
             creator: room.createdBy,
-            startedAt: new Date()
+            startedAt: new Date(),
+            expiresAt: new Date(Date.now() + (room.matchDuration || 20) * 60 * 1000)
         });
 
         // Update the room state to active and link the match
@@ -81,9 +80,10 @@ const initiateMatchmaking = async (req, res) => {
                     constraints: q.constraints,
                     examples: q.examples,
                     testCases: q.testCases,
-                    boilerPlate: q.boilerPlate.filter(b => b.language === "javascript") // JS only for now
+                    boilerPlate: q.boilerPlate
                 })),
-                startedAt: match.startedAt
+                startedAt: match.startedAt,
+                expiresAt: match.expiresAt
             }
         });
 
@@ -132,9 +132,10 @@ const getMatchDetails = async (req, res) => {
                     constraints: q.constraints,
                     examples: q.examples,
                     testCases: q.testCases,
-                    boilerPlate: q.boilerPlate.filter(b => b.language === "javascript") // JS only for now
+                    boilerPlate: q.boilerPlate
                 })),
-                startedAt: match.startedAt
+                startedAt: match.startedAt,
+                expiresAt: match.expiresAt
             }
         });
     } catch (error) {

@@ -12,6 +12,13 @@ const  ROOM_DIFFICULTY={
         HARD:'hard'
 }
 
+const ROOM_MATCH_TIMERS = {
+        TEN: 10,
+        FIFTEEN: 15,
+        TWENTY: 20,
+        THIRTY: 30
+}
+
 const QUESTION_DIFFICULTY = {
         EASY:'easy',
         MEDIUM:'medium',
@@ -58,6 +65,7 @@ const submissionStatus = {
 module.exports = {
   ROOM_STATUS,
   ROOM_DIFFICULTY,
+  ROOM_MATCH_TIMERS,
   QUESTION_DIFFICULTY,
   LANGUAGES,
   MATCH_STATUS,

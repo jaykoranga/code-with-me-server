@@ -3,6 +3,7 @@ const { STATUS_CODES } = require("../../../constants/statusCodes");
 const { generateUniqueRoomName } = require("../../../utils/generateUniqueName");
 const formatRoomResponse = require("../utils/formatRoomResponse");
 const { ROOM_MESSAGES } = require("../constants/room.constants");
+const { ROOM_MATCH_TIMERS } = require("../../../constants/enums");
 
 const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
 const MIN_PARTICIPANTS = 2;
@@ -17,7 +18,7 @@ const createInviteCode = () =>
 //create a room
 const createRoom = async (req, res) => {
   try {
-    const { difficulty, maxParticipants } = req.body || {};
+    const { difficulty, maxParticipants, numberOfQuestions, matchDuration, timer } = req.body || {};
     const userId = req.user?.userId;
 
     if (!userId) {
@@ -51,6 +52,29 @@ const createRoom = async (req, res) => {
       });
     }
 
+    let parsedNumberOfQuestions = 3;
+    if (numberOfQuestions !== undefined) {
+      const parsed = Number(numberOfQuestions);
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
+          message: "Number of questions must be a positive integer",
+        });
+      }
+      parsedNumberOfQuestions = parsed;
+    }
+
+    const inputDuration = matchDuration !== undefined ? matchDuration : timer;
+    let parsedMatchDuration = 20;
+    if (inputDuration !== undefined) {
+      const parsed = Number(inputDuration);
+      if (!Object.values(ROOM_MATCH_TIMERS).includes(parsed)) {
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
+          message: "Match duration must be either 10, 15, 20, or 30 minutes",
+        });
+      }
+      parsedMatchDuration = parsed;
+    }
+
     const roomPayload = {
       name: generateUniqueRoomName(),
       inviteCode: createInviteCode(),
@@ -59,6 +83,8 @@ const createRoom = async (req, res) => {
       numberOfUsers: 1,
       maxParticipants: parsedMaxParticipants,
       difficulty: normalizedDifficulty,
+      numberOfQuestions: parsedNumberOfQuestions,
+      matchDuration: parsedMatchDuration,
     };
 
     const room = await Room.create(roomPayload);

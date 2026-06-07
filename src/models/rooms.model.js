@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {ROOM_STATUS,ROOM_DIFFICULTY}=require('../constants/enums')
+const {ROOM_STATUS,ROOM_DIFFICULTY,ROOM_MATCH_TIMERS}=require('../constants/enums')
 const roomSchema = new mongoose.Schema(
   {
     name: {
@@ -21,8 +21,8 @@ const roomSchema = new mongoose.Schema(
     },
     numberOfQuestions: {
       type: Number,
-      default: 0,
-      min: 0,
+      default: 3,
+      min: 1,
     },
     status: {
       type: String,
@@ -51,6 +51,11 @@ const roomSchema = new mongoose.Schema(
       enum: Object.values(ROOM_DIFFICULTY),
       default: "easy",
       trim: true,
+    },
+    matchDuration: {
+      type: Number,
+      enum: Object.values(ROOM_MATCH_TIMERS),
+      default: 20,
     },
     timestamp: {
       type: Date,
