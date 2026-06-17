@@ -101,7 +101,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> nums;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << solve(nums) << endl;\n  }\n  return 0;\n}",
         "description": "Sum of Array boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Contains Duplicate",
@@ -205,7 +208,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> nums;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << (solve(nums) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Contains Duplicate boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Fizz Buzz",
@@ -308,7 +314,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  int n;\n  if (cin >> n) {\n    vector<string> res = solve(n);\n    cout << \"[\";\n    for (size_t i = 0; i < res.size(); i++) {\n      cout << \"\\\"\" << res[i] << \"\\\"\";\n      if (i + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Fizz Buzz boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "json"
+    }
   },
   {
     "name": "Find Maximum",
@@ -412,7 +421,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> nums;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << solve(nums) << endl;\n  }\n  return 0;\n}",
         "description": "Find Maximum boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Palindrome Check",
@@ -516,7 +528,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\n#include <sstream>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    } else if (line == \"\\\"\\\"\") {\n      line = \"\";\n    }\n    cout << (solve(line) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Palindrome Check boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Two Sum Easy",
@@ -621,7 +636,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line1, line2;\n  if (getline(cin, line1) && getline(cin, line2)) {\n    vector<int> nums;\n    stringstream ss(line1);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    int target = stoi(line2);\n    vector<int> res = solve(nums, target);\n    cout << \"[\" << res[0] << \",\" << res[1] << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Two Sum Easy boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "unordered_array"
+    }
   },
   {
     "name": "Count Vowels",
@@ -724,7 +742,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    } else if (line == \"\\\"\\\"\") {\n      line = \"\";\n    }\n    cout << solve(line) << endl;\n  }\n  return 0;\n}",
         "description": "Count Vowels boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Anagram Check",
@@ -828,7 +849,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string s, t;\n  if (getline(cin, s) && getline(cin, t)) {\n    if (s.size() >= 2 && s.front() == '\"' && s.back() == '\"') s = s.substr(1, s.size() - 2);\n    if (t.size() >= 2 && t.front() == '\"' && t.back() == '\"') t = t.substr(1, t.size() - 2);\n    cout << (solve(s, t) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Anagram Check boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Intersection of Arrays",
@@ -932,7 +956,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string l1, l2;\n  if (getline(cin, l1) && getline(cin, l2)) {\n    vector<int> n1, n2;\n    stringstream s1(l1), s2(l2);\n    char ch;\n    int val;\n    s1 >> ch;\n    while (s1 >> val) {\n      n1.push_back(val);\n      s1 >> ch;\n      if (ch == ']') break;\n    }\n    s2 >> ch;\n    while (s2 >> val) {\n      n2.push_back(val);\n      s2 >> ch;\n      if (ch == ']') break;\n    }\n    vector<int> res = solve(n1, n2);\n    sort(res.begin(), res.end());\n    cout << \"[\";\n    for (size_t i = 0; i < res.size(); i++) {\n      cout << res[i];\n      if (i + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Intersection of Arrays boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "unordered_array"
+    }
   },
   {
     "name": "Majority Element",
@@ -1036,7 +1063,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> nums;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << solve(nums) << endl;\n  }\n  return 0;\n}",
         "description": "Majority Element boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Merge Sorted Arrays",
@@ -1140,7 +1170,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string l1, l2;\n  if (getline(cin, l1) && getline(cin, l2)) {\n    vector<int> n1, n2;\n    stringstream s1(l1), s2(l2);\n    char ch;\n    int val;\n    s1 >> ch;\n    while (s1 >> val) {\n      n1.push_back(val);\n      s1 >> ch;\n      if (ch == ']') break;\n    }\n    s2 >> ch;\n    while (s2 >> val) {\n      n2.push_back(val);\n      s2 >> ch;\n      if (ch == ']') break;\n    }\n    vector<int> res = solve(n1, n2);\n    cout << \"[\";\n    for (size_t i = 0; i < res.size(); i++) {\n      cout << res[i];\n      if (i + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Merge Sorted Arrays boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "json"
+    }
   },
   {
     "name": "Fibonacci Simple",
@@ -1243,7 +1276,10 @@
         "runnerCode": "#include <iostream>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  int n;\n  if (cin >> n) {\n    cout << solve(n) << endl;\n  }\n  return 0;\n}",
         "description": "Fibonacci Simple boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Count Odd Numbers",
@@ -1347,7 +1383,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> nums;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << solve(nums) << endl;\n  }\n  return 0;\n}",
         "description": "Count Odd Numbers boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Valid Palindrome Simple",
@@ -1450,7 +1489,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    } else if (line == \"\\\"\\\"\") {\n      line = \"\";\n    }\n    cout << (solve(line) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Valid Palindrome Simple boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Search Insert Position Simple",
@@ -1555,7 +1597,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line1, line2;\n  if (getline(cin, line1) && getline(cin, line2)) {\n    vector<int> nums;\n    stringstream ss(line1);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    int target = stoi(line2);\n    cout << solve(nums, target) << endl;\n  }\n  return 0;\n}",
         "description": "Search Insert Position Simple boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Valid Parentheses",
@@ -1659,7 +1704,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    } else if (line == \"\\\"\\\"\") {\n      line = \"\";\n    }\n    cout << (solve(line) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Valid Parentheses boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Container With Most Water",
@@ -1763,7 +1811,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<int> height;\n    stringstream ss(line);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      height.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    cout << solve(height) << endl;\n  }\n  return 0;\n}",
         "description": "Container With Most Water boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Longest Substring Without Repeating",
@@ -1867,7 +1918,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    } else if (line == \"\\\"\\\"\") {\n      line = \"\";\n    }\n    cout << solve(line) << endl;\n  }\n  return 0;\n}",
         "description": "Longest Substring Without Repeating boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Search Rotated Sorted Array",
@@ -1973,7 +2027,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line1, line2;\n  if (getline(cin, line1) && getline(cin, line2)) {\n    vector<int> nums;\n    stringstream ss(line1);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    int target = stoi(line2);\n    cout << solve(nums, target) << endl;\n  }\n  return 0;\n}",
         "description": "Search Rotated Sorted Array boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Generate Parentheses",
@@ -2076,7 +2133,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  int n;\n  if (cin >> n) {\n    vector<string> res = solve(n);\n    sort(res.begin(), res.end());\n    cout << \"[\";\n    for (size_t i = 0; i < res.size(); i++) {\n      cout << \"\\\"\" << res[i] << \"\\\"\";\n      if (i + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Generate Parentheses boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "unordered_array"
+    }
   },
   {
     "name": "Spiral Matrix",
@@ -2180,7 +2240,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    // Simplistic parse of a 2D vector \"[[1,2],[3,4]]\"\n    vector<vector<int> > matrix;\n    size_t i = 0;\n    while (i < line.size()) {\n      if (line[i] == '[') {\n        i++;\n        if (i < line.size() && line[i] != '[') {\n          vector<int> row;\n          while (i < line.size() && line[i] != ']') {\n            if (isdigit(line[i]) || line[i] == '-') {\n              int val = 0;\n              int sign = 1;\n              if (line[i] == '-') { sign = -1; i++; }\n              while (i < line.size() && isdigit(line[i])) {\n                val = val * 10 + (line[i] - '0');\n                i++;\n              }\n              row.push_back(val * sign);\n            } else {\n              i++;\n            }\n          }\n          if (!row.empty()) matrix.push_back(row);\n        }\n      } else {\n        i++;\n      }\n    }\n    vector<int> res = solve(matrix);\n    cout << \"[\";\n    for (size_t k = 0; k < res.size(); k++) {\n      cout << res[k];\n      if (k + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Spiral Matrix boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "json"
+    }
   },
   {
     "name": "Rotate Image Matrix",
@@ -2285,7 +2348,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<vector<int> > matrix;\n    size_t i = 0;\n    while (i < line.size()) {\n      if (line[i] == '[') {\n        i++;\n        if (i < line.size() && line[i] != '[') {\n          vector<int> row;\n          while (i < line.size() && line[i] != ']') {\n            if (isdigit(line[i]) || line[i] == '-') {\n              int val = 0;\n              int sign = 1;\n              if (line[i] == '-') { sign = -1; i++; }\n              while (i < line.size() && isdigit(line[i])) {\n                val = val * 10 + (line[i] - '0');\n                i++;\n              }\n              row.push_back(val * sign);\n            } else {\n              i++;\n            }\n          }\n          if (!row.empty()) matrix.push_back(row);\n        }\n      } else {\n        i++;\n      }\n    }\n    vector<vector<int> > res = solve(matrix);\n    cout << \"[\";\n    for (size_t r = 0; r < res.size(); r++) {\n      cout << \"[\";\n      for (size_t c = 0; c < res[r].size(); c++) {\n        cout << res[r][c];\n        if (c + 1 < res[r].size()) cout << \",\";\n      }\n      cout << \"]\";\n      if (r + 1 < res.size()) cout << \",\";\n    }\n    cout << \"]\" << endl;\n  }\n  return 0;\n}",
         "description": "Rotate Image Matrix boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "json"
+    }
   },
   {
     "name": "Evaluate Reverse Polish",
@@ -2389,7 +2455,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <string>\n#include <sstream>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<string> tokens;\n    size_t i = 0;\n    while (i < line.size()) {\n      if (line[i] == '\"') {\n        i++;\n        string s = \"\";\n        while (i < line.size() && line[i] != '\"') {\n          s += line[i];\n          i++;\n        }\n        tokens.push_back(s);\n        i++;\n      } else {\n        i++;\n      }\n    }\n    cout << solve(tokens) << endl;\n  }\n  return 0;\n}",
         "description": "Evaluate Reverse Polish boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Valid Sudoku Block",
@@ -2490,7 +2559,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<vector<char> > board(9, vector<char>(9, '.'));\n    int r = 0, c = 0;\n    for (char ch : line) {\n      if (ch == '.' || (ch >= '1' && ch <= '9')) {\n        board[r][c] = ch;\n        c++;\n        if (c == 9) { c = 0; r++; }\n        if (r == 9) break;\n      }\n    }\n    cout << (solve(board) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Valid Sudoku Block boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Subarrays with K Distinct",
@@ -2595,7 +2667,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line1, line2;\n  if (getline(cin, line1) && getline(cin, line2)) {\n    vector<int> nums;\n    stringstream ss(line1);\n    char ch;\n    int val;\n    ss >> ch;\n    while (ss >> val) {\n      nums.push_back(val);\n      ss >> ch;\n      if (ch == ']') break;\n    }\n    int k = stoi(line2);\n    cout << solve(nums, k) << endl;\n  }\n  return 0;\n}",
         "description": "Subarrays with K Distinct boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Edit Distance",
@@ -2699,7 +2774,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string w1, w2;\n  if (getline(cin, w1) && getline(cin, w2)) {\n    if (w1.size() >= 2 && w1.front() == '\"' && w1.back() == '\"') w1 = w1.substr(1, w1.size() - 2);\n    if (w2.size() >= 2 && w2.front() == '\"' && w2.back() == '\"') w2 = w2.substr(1, w2.size() - 2);\n    cout << solve(w1, w2) << endl;\n  }\n  return 0;\n}",
         "description": "Edit Distance boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Longest Palindrome Substring",
@@ -2808,7 +2886,10 @@
         "runnerCode": "#include <iostream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    if (line.size() >= 2 && line.front() == '\"' && line.back() == '\"') {\n      line = line.substr(1, line.size() - 2);\n    }\n    cout << \"\\\"\" << solve(line) << \"\\\"\" << endl;\n  }\n  return 0;\n}",
         "description": "Longest Palindrome Substring boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Course Schedule Check",
@@ -2914,7 +2995,10 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <sstream>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line1, line2;\n  if (getline(cin, line1) && getline(cin, line2)) {\n    int numCourses = stoi(line1);\n    vector<vector<int> > prerequisites;\n    size_t i = 0;\n    while (i < line2.size()) {\n      if (line2[i] == '[') {\n        i++;\n        if (i < line2.size() && line2[i] != '[') {\n          vector<int> row;\n          while (i < line2.size() && line2[i] != ']') {\n            if (isdigit(line2[i])) {\n              int val = 0;\n              while (i < line2.size() && isdigit(line2[i])) {\n                val = val * 10 + (line2[i] - '0');\n                i++;\n              }\n              row.push_back(val);\n            } else {\n              i++;\n            }\n          }\n          if (!row.empty()) prerequisites.push_back(row);\n        }\n      } else {\n        i++;\n      }\n    }\n    cout << (solve(numCourses, prerequisites) ? \"true\" : \"false\") << endl;\n  }\n  return 0;\n}",
         "description": "Course Schedule Check boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "N-Queens Ways",
@@ -3016,7 +3100,10 @@
         "runnerCode": "#include <iostream>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  int n;\n  if (cin >> n) {\n    cout << solve(n) << endl;\n  }\n  return 0;\n}",
         "description": "N-Queens Ways boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   },
   {
     "name": "Maximize Binary Tree Depth",
@@ -3120,6 +3207,9 @@
         "runnerCode": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n// {{USER_CODE}}\nint main() {\n  string line;\n  if (getline(cin, line)) {\n    vector<string> nodes;\n    size_t i = 0;\n    while (i < line.size()) {\n      if (line[i] == '\"') {\n        i++;\n        string s = \"\";\n        while (i < line.size() && line[i] != '\"') {\n          s += line[i];\n          i++;\n        }\n        nodes.push_back(s);\n        i++;\n      } else {\n        i++;\n      }\n    }\n    cout << solve(nodes) << endl;\n  }\n  return 0;\n}",
         "description": "Maximize Binary Tree Depth boilerplate code in C++"
       }
-    ]
+    ],
+    "judgeConfig": {
+      "strategy": "strict"
+    }
   }
 ]

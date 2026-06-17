@@ -1,5 +1,8 @@
 const { Question } = require("../../../models/question.model");
 const Submission = require("../../../models/submission.model");
+const Match = require("../../../models/match.model");
+const MatchQuestionScore = require("../../../models/matchQuestionScore.model");
+const judgeService = require("../../judge/services/judgeService");
 const pistonService = require("../services/pistonService");
 const { STATUS_CODES } = require("../../../constants/statusCodes");
 const { submissionStatus } = require("../../../constants/enums");
@@ -60,7 +63,7 @@ const runCode = async (req, res) => {
 
       const actualOutput = execution.stdout.trim();
       const expectedOutput = tc.output.trim();
-      const passed = actualOutput === expectedOutput;
+      const passed = judgeService.evaluate(execution.stdout, tc.output, question.judgeConfig);
 
       if (!passed) {
         allPassed = false;
@@ -145,7 +148,7 @@ const submitCode = async (req, res) => {
 
       const actualOutput = execution.stdout.trim();
       const expectedOutput = tc.output.trim();
-      const passed = actualOutput === expectedOutput;
+      const passed = judgeService.evaluate(execution.stdout, tc.output, question.judgeConfig);
 
       if (passed) {
         passedCount++;
@@ -176,6 +179,69 @@ const submitCode = async (req, res) => {
       totalCount: testCases.length,
       error: runTimeErrorDetails,
     });
+
+    // If the submission is accepted and is part of an active match, record the score
+    if (finalStatus === submissionStatus.ACCEPTED && matchId) {
+      try {
+        // Ensure we only record score for the first successful solve
+        const existingScore = await MatchQuestionScore.findOne({
+          matchId,
+          questionId,
+          userId
+        });
+
+        if (!existingScore) {
+          // Fetch match details to calculate solve duration and player counts
+          const match = await Match.findById(matchId);
+          if (match) {
+            const startedAtTime = match.startedAt ? new Date(match.startedAt).getTime() : Date.now();
+            const solveDuration = Date.now() - startedAtTime;
+
+            // Calculate question rank: count other users who already solved this question in this match
+            const solversCount = await MatchQuestionScore.countDocuments({
+              matchId,
+              questionId,
+              isSolved: true
+            });
+            const rankOnQuestion = solversCount + 1;
+
+            // Determine base score by question difficulty
+            let baseScore = 100;
+            if (question.difficulty === "medium") {
+              baseScore = 200;
+            } else if (question.difficulty === "hard") {
+              baseScore = 300;
+            }
+
+            // Calculate speed bonus based on number of players in the match, capped at 50% of baseScore
+            const totalPlayers = match.players ? match.players.length : (match.maxPlayers || 2);
+            const calculatedBonus = Math.max(0, (totalPlayers - rankOnQuestion) * 15);
+            const maxAllowedBonus = Math.floor(baseScore / 2);
+            const bonusPoints = Math.min(calculatedBonus, maxAllowedBonus);
+
+            const score = baseScore + bonusPoints;
+
+            // Create scoreboard solve entry
+            await MatchQuestionScore.create({
+              matchId,
+              questionId,
+              userId,
+              score,
+              isSolved: true,
+              firstAcceptedSubmissionId: submission._id,
+              firstSolvedAt: new Date(),
+              solveDuration,
+              rankOnQuestion,
+              bonusPoints
+            });
+            console.log(`MatchQuestionScore created: user=${userId}, match=${matchId}, question=${questionId}, rank=${rankOnQuestion}, score=${score}`);
+          }
+        }
+      } catch (scoreError) {
+        console.error("Error creating MatchQuestionScore:", scoreError);
+        // Fallback: don't block the API response if score calculation fails
+      }
+    }
 
     return res.status(STATUS_CODES.CREATED).json({
       message: "Submission evaluated successfully",

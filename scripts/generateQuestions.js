@@ -1494,6 +1494,23 @@ const hardQuestions = [
 // Combine all questions
 const finalQuestionsList = [...easyQuestions, ...mediumQuestions, ...hardQuestions];
 
+// Define custom judge configurations for questions that require non-strict matching
+const judgeConfigs = {
+  "Two Sum Easy": { strategy: "unordered_array" },
+  "Intersection of Arrays": { strategy: "unordered_array" },
+  "Generate Parentheses": { strategy: "unordered_array" },
+  
+  "Fizz Buzz": { strategy: "json" },
+  "Merge Sorted Arrays": { strategy: "json" },
+  "Spiral Matrix": { strategy: "json" },
+  "Rotate Image Matrix": { strategy: "json" }
+};
+
+// Map each question to have its appropriate judgeConfig, defaulting to strict
+finalQuestionsList.forEach(q => {
+  q.judgeConfig = judgeConfigs[q.name] || { strategy: "strict" };
+});
+
 console.log(`Ready to write ${finalQuestionsList.length} questions.`);
 fs.writeFileSync(
   path.join(__dirname, "../generated_questions.json"),

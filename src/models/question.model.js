@@ -79,6 +79,20 @@ const questionSchema = new mongoose.Schema(
         },
       },
     ],
+    judgeConfig: {
+      strategy: {
+        type: String,
+        enum: ["strict", "json", "unordered_array", "approximate_numeric", "custom"],
+        default: "strict"
+      },
+      epsilon: {
+        type: Number,
+        default: 1e-6
+      },
+      customJudgeScript: {
+        type: String
+      }
+    }
   },
   { timestamps: true },
 );

@@ -9,8 +9,6 @@ const ROOM_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
 const MIN_PARTICIPANTS = 2;
 const MAX_PARTICIPANTS = 5;
 
-const createId = (prefix = "random-prefix") =>
-  `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
 const createInviteCode = () =>
   Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -24,6 +22,18 @@ const createRoom = async (req, res) => {
     if (!userId) {
       return res.status(STATUS_CODES.UNAUTHORIZED).json({
         message: ROOM_MESSAGES.USER_REQUIRED,
+      });
+    }
+
+    // Check if user is already in another active/waiting room
+    const existingRoom = await Room.findOne({
+      participants: userId,
+      status: { $in: ["waiting", "active"] },
+    });
+
+    if (existingRoom) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: "You can be in only one room",
       });
     }
 
@@ -86,7 +96,7 @@ const createRoom = async (req, res) => {
       numberOfQuestions: parsedNumberOfQuestions,
       matchDuration: parsedMatchDuration,
     };
-
+    console.log("room payload is", roomPayload)
     const room = await Room.create(roomPayload);
 
     if (!room) {
@@ -203,6 +213,18 @@ const joinRoom = async (req, res) => {
       });
     }
 
+    // Check if user is already in another active/waiting room
+    const existingRoom = await Room.findOne({
+      participants: userId,
+      status: { $in: ["waiting", "active"] },
+    });
+
+    if (existingRoom) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        message: "You can be in only one room",
+      });
+    }
+
     // Check room status
     if (room.status !== "waiting") {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -275,8 +297,8 @@ const leaveRoom = async (req, res) => {
 
       })
     }
-    if (room.participants.length < 1 ) {
-     
+    if (room.participants.length < 1) {
+
       return res.status(STATUS_CODES.NOT_FOUND).json({
         message: ROOM_MESSAGES.ROOM_EMPTY,
       })
@@ -328,8 +350,8 @@ const deleteRoom = async (req, res) => {
 }
 
 // isParticipant of the room
-const isParticipant = async(req,res)=>{
-  try{
+const isParticipant = async (req, res) => {
+  try {
     const userId = req.user.userId
     const roomId = req.params.roomId || req.body.roomId
     if (!roomId) {
@@ -347,15 +369,15 @@ const isParticipant = async(req,res)=>{
     if (room.participants.includes(userId)) {
       return res.status(STATUS_CODES.OK).json({
         message: "You are a participant in this room",
-        isParticipant:true,
+        isParticipant: true,
       })
-    }else{
+    } else {
       return res.status(STATUS_CODES.OK).json({
         message: "You are not a participant in this room",
-        isParticipant:false,
+        isParticipant: false,
       })
     }
-  }catch(error){
+  } catch (error) {
     console.log("error while checking if participant", error)
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       message: ROOM_MESSAGES.INTERNAL_ERROR

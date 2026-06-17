@@ -1,21 +1,20 @@
-// Service for executing code. Replaces restricted Piston API with Wandbox free compiler.
+// Service for executing code. Interacts with the local or production Piston API.
 
-const WANDBOX_API_URL = "https://wandbox.org/api/compile.json";
-
-// Language configuration mapping to Wandbox compiler IDs
-const LANGUAGE_CONFIG = {
-  "javascript": { compiler: "nodejs-20.17.0" },
-  "python": { compiler: "cpython-3.12.7" },
-  "c": { compiler: "gcc-13.2.0-c" },
-  "cpp": { compiler: "gcc-13.2.0" },
-  "c++": { compiler: "gcc-13.2.0" },
-  "java": { compiler: "openjdk-jdk-21+35" }
+// Language configuration mapping to Piston language tags
+const PISTON_LANGUAGES = {
+  "javascript": "javascript",
+  "js": "javascript",
+  "c++": "cpp",
+  "cpp": "cpp",
+  "python": "python",
+  "c": "c",
+  "java": "java"
 };
 
 /**
- * Executes source code against stdin using Wandbox API.
+ * Executes source code against stdin using Piston API.
  * 
- * @param {string} language - The programming language name (e.g. "javascript", "python")
+ * @param {string} language - The programming language name (e.g. "javascript", "cpp")
  * @param {string} sourceCode - The full user solution concatenated with driver runners
  * @param {string} stdin - Input parameters passed to standard input
  * @returns {Promise<{ stdout: string, stderr: string, code: number, signal: string|null, error: Error|null }>}
@@ -23,62 +22,57 @@ const LANGUAGE_CONFIG = {
 const executeCode = async (language, sourceCode, stdin = "") => {
   try {
     const normalizedLang = String(language).toLowerCase().trim();
-    const config = LANGUAGE_CONFIG[normalizedLang];
+    const pistonLang = PISTON_LANGUAGES[normalizedLang] || normalizedLang;
 
-    if (!config) {
-      return {
-        stdout: "",
-        stderr: `Unsupported language: ${language}`,
-        code: -1,
-        signal: null,
-        error: new Error(`Language '${language}' is not supported by the runner service.`)
-      };
-    }
+    const pistonApiUrl = process.env.PISTON_API_URL || "http://localhost:2000";
+    const url = pistonApiUrl.endsWith("/execute") ? pistonApiUrl : `${pistonApiUrl}/api/v2/execute`;
 
     const payload = {
-      compiler: config.compiler,
-      code: sourceCode,
-      stdin: stdin,
-      save: false
+      language: pistonLang,
+      version: "*",
+      files: [
+        {
+          content: sourceCode
+        }
+      ],
+      stdin
     };
 
-    const response = await fetch(WANDBOX_API_URL, {
+    const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
-      throw new Error(`Wandbox API returned HTTP status ${response.status}`);
+      throw new Error(`Piston API returned HTTP status ${response.status}`);
     }
 
     const result = await response.json();
 
-    // Map compiler output/errors and program output/errors
-    const stdout = result.program_output || "";
-    
-    // Concatenate any compilation warnings/errors and runtime errors
-    let stderr = "";
-    if (result.compiler_error) {
-      stderr += result.compiler_error;
-    }
-    if (result.program_error) {
-      stderr += (stderr ? "\n" : "") + result.program_error;
+    // If compile stage failed or timed out (e.g. compiler status SG/TO/RE or exit code !== 0)
+    if (result.compile && (result.compile.code !== 0 || result.compile.status)) {
+      const compileErr = result.compile.stderr || result.compile.output || result.compile.message || "Compilation error";
+      return {
+        stdout: result.compile.stdout || "",
+        stderr: compileErr,
+        code: result.compile.code ?? -1,
+        signal: result.compile.signal || null,
+        error: null
+      };
     }
 
-    const code = typeof result.status === "string" ? parseInt(result.status, 10) : (result.status ?? 0);
-
+    const runResult = result.run || {};
+    const runErr = runResult.stderr || runResult.message || "";
     return {
-      stdout: stdout,
-      stderr: stderr,
-      code: code,
-      signal: null,
+      stdout: runResult.stdout || "",
+      stderr: runErr,
+      code: runResult.code ?? (runResult.status ? -1 : 0),
+      signal: runResult.signal || null,
       error: null
     };
   } catch (error) {
-    console.error("Wandbox code execution failed:", error);
+    console.error("Piston execution failed:", error);
     return {
       stdout: "",
       stderr: "Execution failed due to code runner service error.",
