@@ -175,65 +175,30 @@ const forfeitMatch = async (req, res) => {
             return res.status(STATUS_CODES.FORBIDDEN).json({ message: MATCH_MESSAGES.PLAYER_NOT_IN_MATCH });
         }
 
-        // Increment forfeiting player's loss immediately
-        await User.findByIdAndUpdate(userId, { $inc: { losses: 1, totalMatchesPlayed: 1 } });
+        // Remove the forfeiting player from the active match players list
+        match.players = match.players.filter(playerId => String(playerId) !== userId);
 
-        const remainingPlayers = match.players.filter(playerId => String(playerId) !== userId);
+        // Remove the forfeiting player from the room participants
+        const room = await Room.findById(match.Room);
+        if (room) {
+            room.participants = room.participants.filter(p => String(p) !== userId);
+            room.numberOfUsers = room.participants.length;
 
-        if (remainingPlayers.length === 1) {
-            // 1v1 match forfeit - declare remaining player the winner and end match
-            const winnerId = remainingPlayers[0];
-
-            match.status = MATCH_STATUS.COMPLETED;
-            match.winner = winnerId;
-            match.resultType = "player_win";
-            await match.save();
-
-            // Increment winner stats
-            await User.findByIdAndUpdate(winnerId, { $inc: { wins: 1, totalMatchesPlayed: 1 } });
-
-            // Put the Room back in waiting state
-            const room = await Room.findById(match.Room);
-            if (room) {
-                room.status = ROOM_STATUS.WAITING;
-                room.matchID = "";
-                await room.save();
+            // If no players are left in the room, cancel the match and the room
+            if (room.participants.length === 0) {
+                room.status = ROOM_STATUS.CANCELLED;
+                match.status = MATCH_STATUS.CANCELLED;
             }
-
-            return res.status(STATUS_CODES.OK).json({
-                message: MATCH_MESSAGES.FORFEITED,
-                matchEnded: true,
-                winner: winnerId,
-                match
-            });
-        } else if (remainingPlayers.length > 1) {
-            // Multiplayer match forfeit - remove current user from match active players and continue
-            match.players = remainingPlayers;
-            await match.save();
-
-            return res.status(STATUS_CODES.OK).json({
-                message: MATCH_MESSAGES.FORFEITED,
-                matchEnded: false,
-                match
-            });
-        } else {
-            // Edge case: no players left
-            match.status = MATCH_STATUS.CANCELLED;
-            await match.save();
-
-            const room = await Room.findById(match.Room);
-            if (room) {
-                room.status = ROOM_STATUS.WAITING;
-                room.matchID = "";
-                await room.save();
-            }
-
-            return res.status(STATUS_CODES.OK).json({
-                message: MATCH_MESSAGES.FORFEITED,
-                matchEnded: true,
-                match
-            });
+            await room.save();
         }
+
+        await match.save();
+
+        return res.status(STATUS_CODES.OK).json({
+            message: MATCH_MESSAGES.FORFEITED,
+            matchEnded: match.status !== MATCH_STATUS.ACTIVE,
+            match
+        });
     } catch (error) {
         console.error("Error during match forfeit:", error);
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({

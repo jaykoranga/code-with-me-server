@@ -213,8 +213,8 @@ const submitCode = async (req, res) => {
               baseScore = 300;
             }
 
-            // Calculate speed bonus based on number of players in the match, capped at 50% of baseScore
-            const totalPlayers = match.players ? match.players.length : (match.maxPlayers || 2);
+            // Calculate speed bonus based on maximum players allowed in the match, capped at 50% of baseScore
+            const totalPlayers = match.maxPlayers || 2;
             const calculatedBonus = Math.max(0, (totalPlayers - rankOnQuestion) * 15);
             const maxAllowedBonus = Math.floor(baseScore / 2);
             const bonusPoints = Math.min(calculatedBonus, maxAllowedBonus);
